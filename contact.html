@@ -518,10 +518,41 @@ Contact info & Map START -->
 
 	<!-- Bootstrap JS -->
 	<script src="./assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+document.querySelector("form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const data = {
+        name: document.getElementById("floatingName").value,
+        email: document.getElementById("floatingInput").value,
+        number: document.getElementById("floatingNumber").value,
+        message: document.getElementById("floatingTextarea2").value
+    };
+
+    const res = await fetch("https://your-backend-url/send-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+        // SHOW TOAST SUCCESS
+        const toast = document.querySelector(".toast");
+        let bootstrapToast = new bootstrap.Toast(toast);
+        bootstrapToast.show();
+    } else {
+        alert("Failed to send message.");
+    }
+});
+</script>
+
 	
 	<!-- Theme Functions -->
 	<script src="./assets/js/functions.js"></script>
 
 </body>
+
 
 </html>
