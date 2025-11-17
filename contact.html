@@ -287,7 +287,7 @@ Main hero START -->
 							</div>
 
 							<!-- Card body & form -->
-							<form class="card-body px-0 pb-0 pt-5 needs-validation" novalidate>
+							<form id="contactForm" class="card-body px-0 pb-0 pt-5 needs-validation" novalidate>
 								<!-- Name -->
 								<div class="input-floating-label form-floating mb-4">
 									<input type="text" class="form-control bg-transparent" id="floatingName" placeholder="Password" required>
@@ -519,36 +519,39 @@ Contact info & Map START -->
 	<!-- Bootstrap JS -->
 	<script src="./assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
-document.querySelector("form").addEventListener("submit", async function(e) {
-    e.preventDefault();
+document.getElementById('contactForm').addEventListener('submit', async function(e){
+  e.preventDefault();
 
-    const data = {
-        name: document.getElementById("floatingName").value,
-        email: document.getElementById("floatingInput").value,
-        number: document.getElementById("floatingNumber").value,
-        message: document.getElementById("floatingTextarea2").value
-    };
+  const name = document.getElementById('floatingName').value.trim();
+  const email = document.getElementById('floatingInput').value.trim();
+  const phone = document.getElementById('floatingNumber').value.trim();
+  const message = document.getElementById('floatingTextarea2').value.trim();
 
-    const res = await fetch("https://karlekartier.github.io/optimista-frontend/contact.html", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+  if(!name || !email || !message){
+    alert('Please fill name, email and message.');
+    return;
+  }
+
+  try {
+    const resp = await fetch('http://localhost:5000/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, message })
     });
 
-    const result = await res.json();
-
-    if (result.success) {
-        // SHOW TOAST SUCCESS
-        const toast = document.querySelector(".toast");
-        let bootstrapToast = new bootstrap.Toast(toast);
-        bootstrapToast.show();
+    const data = await resp.json();
+    if(resp.ok) {
+      alert('Message sent — thank you!');
+      this.reset();
     } else {
-        alert("Failed to send message.");
+      alert('Error: ' + (data.error || 'Failed to send'));
     }
+  } catch (err) {
+    console.error(err);
+    alert('Could not send message — check console for details.');
+  }
 });
 </script>
-
-	
 	<!-- Theme Functions -->
 	<script src="./assets/js/functions.js"></script>
 
@@ -556,4 +559,5 @@ document.querySelector("form").addEventListener("submit", async function(e) {
 
 
 </html>
+
 
